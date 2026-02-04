@@ -1,0 +1,58 @@
+.logs-container {
+  padding: 30px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.back-btn {
+  background-color: #eee;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.back-btn:hover {
+  background-color: #ddd;
+}
+
+.logs-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.logs-table th,
+.logs-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+}
+
+.logs-table th {
+  background-color: #f5f5f5;
+}
+
+.status {
+  padding: 4px 10px;
+  border-radius: 5px;
+  font-weight: 600;
+}
+
+.status.safe {
+  background-color: #d4f4dd;
+  color: #1e7e34;
+}
+
+.status.compromised {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.info {
+  color: #555;
+}
