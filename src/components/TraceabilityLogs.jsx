@@ -48,17 +48,17 @@ const TraceabilityLogs = () => {
             </tr>
           </thead>
           <tbody>
-            {logs.map((log) => (
-              <tr key={log._id}>
-                <td>{new Date(log.timestamp).toLocaleString()}</td>
+            {logs.map((log, index) => (
+              <tr key={index}>
+                <td>{new Date(log.timestamp * 1000).toLocaleString()}</td>
                 <td>{log.rfidTag}</td>
                 <td>{log.drugName}</td>
                 <td>{log.batchNumber}</td>
                 <td>{log.readerID}</td>
                 <td>{log.location}</td>
                 <td>
-                  <span className={log.isCompromised ? "status compromised" : "status safe"}>
-                    {log.isCompromised ? "Compromised" : "Safe"}
+                  <span className={log.violated ? "status compromised" : "status safe"}>
+                    {log.violated ? "Compromised" : "Safe"}
                   </span>
                 </td>
               </tr>

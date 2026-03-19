@@ -105,13 +105,13 @@ const RfidLive = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {logs.map((log) => (
-                      <tr key={log._id}>
-                        <td>{new Date(log.timestamp).toLocaleString()}</td>
+                    {logs.map((log, index) => (
+                      <tr key={index}>
+                        <td>{new Date(log.timestamp * 1000).toLocaleString()}</td>
                         <td>{log.readerID}</td>
                         <td>{log.location}</td>
                         <td>
-                          {log.isCompromised ? (
+                          {log.violated ? (
                             <span className="danger-text">Compromised</span>
                           ) : (
                             <span className="safe-text">Safe</span>
