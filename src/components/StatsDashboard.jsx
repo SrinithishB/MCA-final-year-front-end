@@ -7,57 +7,35 @@ const StatsDashboard = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const res = await api.get("/stats");
-        setStats(res.data.statistics);
-      } catch {
-        alert("Failed to load statistics");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchStats();
+    api.get("/stats")
+      .then((res) => setStats(res.data.statistics))
+      .catch(() => {})
+      .finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <p className="info">Loading statistics...</p>;
-  if (!stats) return <p className="info">No statistics available</p>;
+  if (loading) return <div className="state-msg"><div className="spinner" />Loading statistics...</div>;
+  if (!stats) return null;
+
+  const items = [
+    { label: "Total Drugs",      value: stats.totalDrugs,        icon: "💊", cls: "" },
+    { label: "Compromised",      value: stats.compromisedDrugs,  icon: "⚠️", cls: "danger" },
+    { label: "Cold Storage",     value: stats.coldStorageDrugs,  icon: "❄️", cls: "highlight" },
+    { label: "Temp Logs",        value: stats.temperatureLogs,   icon: "🌡️", cls: "" },
+    { label: "Trace Logs",       value: stats.traceabilityLogs,  icon: "🔍", cls: "" },
+    { label: "Compromise Rate",  value: stats.compromiseRate,    icon: "📊", cls: stats.compromisedDrugs > 0 ? "danger" : "success" },
+  ];
 
   return (
-    <div className="stats-container">
-      <h2>System Statistics</h2>
-
+    <div className="stats-section">
+      <p className="section-title">System Statistics</p>
       <div className="stats-grid">
-        <div className="stat-card">
-          <h3>Total Drugs</h3>
-          <p>{stats.totalDrugs}</p>
-        </div>
-
-        <div className="stat-card danger">
-          <h3>Compromised Drugs</h3>
-          <p>{stats.compromisedDrugs}</p>
-        </div>
-
-        <div className="stat-card">
-          <h3>Cold Storage Drugs</h3>
-          <p>{stats.coldStorageDrugs}</p>
-        </div>
-
-        <div className="stat-card">
-          <h3>Temperature Logs</h3>
-          <p>{stats.temperatureLogs}</p>
-        </div>
-
-        <div className="stat-card">
-          <h3>Traceability Logs</h3>
-          <p>{stats.traceabilityLogs}</p>
-        </div>
-
-        <div className="stat-card highlight">
-          <h3>Compromise Rate</h3>
-          <p>{stats.compromiseRate}</p>
-        </div>
+        {items.map((item) => (
+          <div key={item.label} className={`stat-card ${item.cls}`}>
+            <div className="stat-icon">{item.icon}</div>
+            <div className="stat-label">{item.label}</div>
+            <div className="stat-value">{item.value}</div>
+          </div>
+        ))}
       </div>
     </div>
   );

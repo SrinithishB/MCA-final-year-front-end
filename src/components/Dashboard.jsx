@@ -2,51 +2,47 @@ import { Link } from "react-router-dom";
 import "../css/dashboard.css";
 import StatsDashboard from "./StatsDashboard";
 
-const Dashboard = () => {
-  return (
-    <div className="dashboard-container">
-      <h1>Smart Hospital Drug Monitoring Dashboard</h1>
-      <p className="subtitle">Manage Drug using IoT and Blockchain</p>
+const cards = [
+  { to: "/readers/add",       icon: "📡", title: "Add Reader",          desc: "Register a new RFID reader device" },
+  { to: "/readers",           icon: "🗂️", title: "View Readers",        desc: "Manage all registered readers" },
+  { to: "/drugs/add",         icon: "💊", title: "Add Drug",            desc: "Register a new drug batch" },
+  { to: "/drugs",             icon: "📋", title: "View Drugs",          desc: "View drugs and their status" },
+  { to: "/rfid/live",         icon: "🔴", title: "Live RFID Scan",      desc: "Real-time hardware monitoring" },
+  { to: "/logs/temperature",  icon: "🌡️", title: "Temperature Logs",    desc: "Environmental monitoring history" },
+  { to: "/logs/traceability", icon: "🔍", title: "Traceability Logs",   desc: "Track drug movement across hospital" },
+];
 
-      <div className="card-grid">
-        <Link to="/readers/add" className="dashboard-card">
-          <h3>Add Reader</h3>
-          <p>Create a new RFID reader</p>
-        </Link>
-
-        <Link to="/readers" className="dashboard-card">
-          <h3>View Readers</h3>
-          <p>See all registered readers</p>
-        </Link>
-
-        <Link to="/drugs/add" className="dashboard-card">
-          <h3>Add Drug</h3>
-          <p>Register a new drug batch</p>
-        </Link>
-
-        <Link to="/drugs" className="dashboard-card">
-          <h3>View Drugs</h3>
-          <p>View registered drugs and status</p>
-        </Link>
-
-        <Link to="/rfid/live" className="dashboard-card">
-          <h3>Live RFID Scan</h3>
-          <p>Real-time RFID hardware monitoring</p>
-        </Link>
-
-        <Link to="/logs/temperature" className="dashboard-card">
-          <h3>Temperature Logs</h3>
-          <p>View environmental monitoring history</p>
-        </Link>
-
-        <Link to="/logs/traceability" className="dashboard-card">
-          <h3>Traceability Logs</h3>
-          <p>Track drug movement across hospital</p>
-        </Link>
+const Dashboard = () => (
+  <div className="dashboard-wrapper">
+    <header className="dashboard-topbar">
+      <div className="dashboard-brand">
+        <div className="brand-icon">🏥</div>
+        <div className="brand-text">
+          <h1>MediTrack</h1>
+          <span>Smart Hospital Drug Monitoring System</span>
+        </div>
       </div>
-      <StatsDashboard/>
+      <div className="topbar-status">
+        <span className="topbar-status-dot" />
+        System Online
+      </div>
+    </header>
+
+    <div className="dashboard-body">
+      <p className="section-title">Quick Actions</p>
+      <div className="card-grid">
+        {cards.map((c) => (
+          <Link key={c.to} to={c.to} className="dashboard-card">
+            <div className="card-icon">{c.icon}</div>
+            <h3>{c.title}</h3>
+            <p>{c.desc}</p>
+            <span className="card-arrow">→</span>
+          </Link>
+        ))}
+      </div>
+      <StatsDashboard />
     </div>
-  );
-};
+  </div>
+);
 
 export default Dashboard;

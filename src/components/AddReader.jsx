@@ -4,34 +4,30 @@ import api from "../services/api";
 import "../css/addReader.css";
 
 const AddReader = () => {
+  const navigate = useNavigate();
   const [readerId, setReaderId] = useState("");
   const [location, setLocation] = useState("");
+  const [city, setCity] = useState("");
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
-
-  const navigate = useNavigate();
+  const [message, setMessage] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setMessage("");
+    setMessage(null);
     setLoading(true);
-
     try {
-      const response = await api.post("/readers", {
-        readerId,
-        location,
-      });
-
-      if (response.data.success) {
-        setMessage("✅ Reader added successfully");
+      const res = await api.post("/readers", { readerId, location, city });
+      if (res.data.success) {
+        setMessage({ type: "success", text: "Reader registered successfully" });
         setReaderId("");
         setLocation("");
+        setCity("");
       }
-    } catch (error) {
-      if (error.response?.status === 409) {
-        alert("⚠️ Reader ID already exists");
+    } catch (err) {
+      if (err.response?.status === 409) {
+        setMessage({ type: "error", text: "Reader ID already exists" });
       } else {
-        setMessage("❌ Failed to add reader");
+        setMessage({ type: "error", text: "Failed to register reader" });
       }
     } finally {
       setLoading(false);
@@ -39,57 +35,61 @@ const AddReader = () => {
   };
 
   return (
-    <div className="page-container">
-      {/* Header (same style as ViewReaders) */}
-      <div className="header">
-        <button className="back-btn" onClick={() => navigate("/")}>
-          ← Back
-        </button>
-        <h2>Add RFID Reader</h2>
-      </div>
+    <div className="page-wrapper">
+      <header className="page-header">
+        <button className="back-btn" onClick={() => navigate("/")}>← Back</button>
+        <h2>Register Reader</h2>
+      </header>
 
-      {/* Card layout */}
-      <div className="form-card">
-        <form onSubmit={handleSubmit}>
-          <div className="form-row">
-            <label>Reader ID</label>
-            <input
-              type="text"
-              value={readerId}
-              onChange={(e) => setReaderId(e.target.value.toUpperCase())}
-              placeholder="READER_004"
-              required
-            />
-          </div>
-
-          <div className="form-row">
-            <label>Location</label>
-            <input
-              type="text"
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-              placeholder="Main Entrance"
-              required
-            />
-          </div>
-
-          <div className="button-group">
-            <button type="submit" disabled={loading}>
-              {loading ? "Adding..." : "Add Reader"}
-            </button>
-
-            <button
-              type="button"
-              className="cancel-btn"
-              onClick={() => navigate("/")}
-              disabled={loading}
-            >
-              Cancel
-            </button>
-          </div>
-        </form>
-
-        {message && <p className="message">{message}</p>}
+      <div className="page-body narrow">
+        <div className="card">
+          <form onSubmit={handleSubmit}>
+            <p className="form-section-title">Reader Information</p>
+            <div className="form-group">
+              <label>Reader ID</label>
+              <input
+                type="text"
+                value={readerId}
+                onChange={(e) => setReaderId(e.target.value.toUpperCase())}
+                placeholder="e.g. READER_004"
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label>Location</label>
+              <input
+                type="text"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+                placeholder="e.g. Main Entrance"
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label>City</label>
+              <input
+                type="text"
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+                placeholder="e.g. Chennai"
+                required
+              />
+            </div>
+            <div className="btn-group">
+              <button type="submit" className="btn btn-primary" disabled={loading}>
+                {loading ? "Registering..." : "Register Reader"}
+              </button>
+              <button type="button" className="btn btn-secondary" onClick={() => navigate("/")} disabled={loading}>
+                Cancel
+              </button>
+            </div>
+          </form>
+          {message && (
+            <div className={`alert ${message.type}`}>
+              {message.type === "success" ? "✓ " : "✕ "}{message.text}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

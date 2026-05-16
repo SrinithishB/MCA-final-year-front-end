@@ -9,53 +9,58 @@ const TemperatureLogs = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchLogs = async () => {
-      try {
-        const res = await api.get("/temperature/logs?limit=100");
-        setLogs(res.data.logs || []);
-      } catch {
-        alert("Failed to load temperature logs");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchLogs();
+    api.get("/temperature/logs?limit=100")
+      .then((res) => setLogs(res.data.logs || []))
+      .catch(() => alert("Failed to load temperature logs"))
+      .finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <p className="info">Loading temperature logs...</p>;
-
   return (
-    <div className="logs-container">
-      <div className="header">
+    <div className="page-wrapper">
+      <header className="page-header">
         <button className="back-btn" onClick={() => navigate("/")}>← Back</button>
         <h2>Temperature Logs</h2>
-      </div>
+        {!loading && <span className="record-count">{logs.length} records</span>}
+      </header>
 
-      {logs.length === 0 ? (
-        <p className="info">No temperature logs found</p>
-      ) : (
-        <table className="logs-table">
-          <thead>
-            <tr>
-              <th>Timestamp</th>
-              <th>Temperature (°C)</th>
-              <th>Humidity (%)</th>
-              <th>RFID Tag</th>
-            </tr>
-          </thead>
-          <tbody>
-            {logs.map((log) => (
-              <tr key={log._id}>
-                <td>{new Date(log.timestamp).toLocaleString()}</td>
-                <td>{log.temperature}</td>
-                <td>{log.humidity}</td>
-                <td>{log.rfidTag || "-"}</td>
+      <div className="page-body">
+        {loading ? (
+          <div className="state-msg"><div className="spinner" />Loading temperature logs...</div>
+        ) : logs.length === 0 ? (
+          <div className="state-msg">No temperature logs found</div>
+        ) : (
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Timestamp</th>
+                <th>Temperature (°C)</th>
+                <th>Humidity (%)</th>
+                <th>RFID Tag</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+            </thead>
+            <tbody>
+              {logs.map((log, i) => (
+                <tr key={log._id}>
+                  <td style={{ color: "var(--text-muted)", fontFamily: "var(--font-mono)", fontSize: 11 }}>{String(i + 1).padStart(3, "0")}</td>
+                  <td style={{ fontFamily: "var(--font-mono)", fontSize: 12 }}>
+                    {new Date(log.timestamp).toLocaleString()}
+                  </td>
+                  <td style={{ fontFamily: "var(--font-mono)", color: log.temperature > 30 ? "var(--danger)" : "var(--text)" }}>
+                    {log.temperature}
+                  </td>
+                  <td style={{ fontFamily: "var(--font-mono)" }}>{log.humidity}</td>
+                  <td>
+                    {log.rfidTag
+                      ? <code>{log.rfidTag}</code>
+                      : <span style={{ color: "var(--text-faint)" }}>—</span>}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
     </div>
   );
 };
